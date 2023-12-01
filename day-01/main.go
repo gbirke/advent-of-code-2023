@@ -32,8 +32,8 @@ func GetFirstAndLastMatchFromLine(line string, numberwords []string) (FirstAndLa
 		}
 	}
 
-	if firstIndex == len(line) + 1 || lastIndex == -1 {
-		return FirstAndLastMatch{"",""}, fmt.Errorf("No number words found in line %q", line)
+	if firstIndex == len(line)+1 || lastIndex == -1 {
+		return FirstAndLastMatch{"", ""}, fmt.Errorf("No number words found in line %q", line)
 	}
 
 	return FirstAndLastMatch{firstNumber, lastNumber}, nil
@@ -48,6 +48,43 @@ func GetNumberFromLineWithSimpleWordList(line string) (int, error) {
 	return strconv.Atoi(match.firstMatch + match.lastMatch)
 }
 
+func keys[K comparable, V any](m map[K]V) []K {
+	keys := make([]K, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+var wordMap = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
+	"1":     "1",
+	"2":     "2",
+	"3":     "3",
+	"4":     "4",
+	"5":     "5",
+	"6":     "6",
+	"7":     "7",
+	"8":     "8",
+	"9":     "9",
+}
+
+func GetNumberFromLineWithMappedWordList(line string) (int, error) {
+
+	match, err := GetFirstAndLastMatchFromLine(line, keys(wordMap))
+	if err != nil {
+		return 0, err
+	}
+	return strconv.Atoi(wordMap[match.firstMatch] + wordMap[match.lastMatch])
+}
 
 type getNumberFromLine func(string) (int, error)
 
@@ -67,4 +104,7 @@ func main() {
 	}
 	fmt.Println("Part 1")
 	fmt.Println("checksum is", GetChecksum(lines, GetNumberFromLineWithSimpleWordList))
+
+	fmt.Println("Part 2")
+	fmt.Println("checksum is", GetChecksum(lines, GetNumberFromLineWithMappedWordList))
 }
